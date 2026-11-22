@@ -115,11 +115,28 @@
 }
 
 // Quiet outlined button (Edit, Cancel...). Add .is-danger for destructive ones (Delete).
+// Button text colour: solid dark in light mode, solid light in dark mode.
+// Set per element (not only on <html>) so it is right wherever data-bs-theme is applied.
+.btn-light,
+.btn-outline-subtle,
+.btn-kebab,
+.password-toggle {
+    --mp-btn-ink: #313a46;
+}
+
+[data-bs-theme="dark"] .btn-light,
+[data-bs-theme="dark"] .btn-outline-subtle,
+[data-bs-theme="dark"] .btn-kebab,
+[data-bs-theme="dark"] .password-toggle {
+    --mp-btn-ink: #eef0f3;
+}
+
 .btn-outline-subtle {
-    --#{$prefix}btn-color: var(--#{$prefix}dark); // darkest text in light mode, lightest in dark mode
+    --#{$prefix}btn-color: var(--mp-btn-ink);
     --#{$prefix}btn-bg: var(--#{$prefix}secondary-bg);
     --#{$prefix}btn-border-color: var(--#{$prefix}border-color);
-    --#{$prefix}btn-hover-color: var(--#{$prefix}dark);
+    --#{$prefix}btn-hover-color: var(--mp-btn-ink);
+    --#{$prefix}btn-active-color: var(--mp-btn-ink);
     --#{$prefix}btn-hover-bg: var(--#{$prefix}tertiary-bg);
     --#{$prefix}btn-hover-border-color: var(--#{$prefix}border-color);
     --#{$prefix}btn-active-bg: var(--#{$prefix}tertiary-bg);
@@ -152,6 +169,23 @@
     --#{$prefix}btn-disabled-border-color: #{rgba(tint-color($danger, 50%), 0.45)};
 }
 
+// Light (secondary) buttons such as Cancel. The template fades the text on hover
+// and uses colours that only flip at the page root, so keep both solid here.
+.btn-light {
+    --#{$prefix}btn-color: var(--mp-btn-ink);
+    --#{$prefix}btn-bg: var(--#{$prefix}tertiary-bg);
+    --#{$prefix}btn-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-hover-color: var(--mp-btn-ink);
+    --#{$prefix}btn-hover-bg: var(--#{$prefix}secondary-bg);
+    --#{$prefix}btn-hover-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-active-color: var(--mp-btn-ink);
+    --#{$prefix}btn-active-bg: var(--#{$prefix}secondary-bg);
+    --#{$prefix}btn-active-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-disabled-color: var(--#{$prefix}secondary-color);
+    --#{$prefix}btn-disabled-bg: var(--#{$prefix}tertiary-bg);
+    --#{$prefix}btn-disabled-border-color: var(--#{$prefix}border-color);
+}
+
 // The square ⋯ "more actions" button
 .btn-kebab {
     width: 32px;
@@ -162,7 +196,7 @@
     justify-content: center;
     font-size: 1.15rem;
     border-radius: $border-radius;
-    color: var(--#{$prefix}dark);
+    color: var(--mp-btn-ink);
     background-color: var(--#{$prefix}secondary-bg);
     border: 1px solid var(--#{$prefix}border-color);
 
@@ -170,7 +204,7 @@
     &.show,
     &:focus-visible {
         background-color: var(--#{$prefix}tertiary-bg);
-        color: var(--#{$prefix}emphasis-color);
+        color: var(--mp-btn-ink);
     }
 
     &::after {
@@ -267,7 +301,7 @@
         &:hover,
         &:focus-visible {
             background-color: var(--#{$prefix}tertiary-bg);
-            color: var(--#{$prefix}emphasis-color);
+            color: var(--mp-btn-ink);
         }
     }
 }
