@@ -1,6 +1,7 @@
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import AuthCard from '@/components/auth/AuthCard';
 import TextFormInput from '@/components/form/TextFormInput';
+import PasswordFormInput from '@/components/form/PasswordFormInput';
 import useSignIn from '../useSignIn';
 
 const inputClass = 'bg-light bg-opacity-50 border-light py-2';
@@ -26,10 +27,9 @@ const Login = () => {
           />
         </div>
         <div className="mb-3">
-          <TextFormInput
+          <PasswordFormInput
             control={control}
             name="password"
-            type="password"
             label="Password"
             placeholder="Enter your password"
             autoComplete="current-password"

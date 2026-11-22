@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { changePassword } from '@/api/auth';
 import { getErrorMessage, getFieldErrors } from '@/api/client';
 import PageTitle from '@/components/PageTitle';
-import TextFormInput from '@/components/form/TextFormInput';
+import PasswordFormInput from '@/components/form/PasswordFormInput';
 
 // Keep these rules in line with the backend's password rules.
 const MIN_LENGTH = 8;
@@ -74,16 +74,16 @@ const ChangePasswordPage = () => {
 
               <form onSubmit={onSubmit} noValidate>
                 <div className="mb-3">
-                  <TextFormInput control={control} name="currentPassword" type="password" label="Current password" autoComplete="current-password" />
+                  <PasswordFormInput control={control} name="currentPassword" label="Current password" autoComplete="current-password" />
                 </div>
                 <div className="mb-3">
-                  <TextFormInput control={control} name="password" type="password" label="New password" autoComplete="new-password" />
+                  <PasswordFormInput control={control} name="password" label="New password" autoComplete="new-password" />
                   <small className="text-muted">
                     At least {MIN_LENGTH} characters, with uppercase, lowercase and a number.
                   </small>
                 </div>
                 <div className="mb-3">
-                  <TextFormInput control={control} name="passwordConfirmation" type="password" label="Confirm new password" autoComplete="new-password" />
+                  <PasswordFormInput control={control} name="passwordConfirmation" label="Confirm new password" autoComplete="new-password" />
                 </div>
                 <Button type="submit" variant="primary" disabled={loading}>
                   {loading ? <Spinner size="sm" /> : 'Update password'}

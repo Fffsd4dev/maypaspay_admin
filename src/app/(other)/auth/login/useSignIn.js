@@ -18,6 +18,7 @@ const REASON_MESSAGES = {
   expired: 'Your session has expired. Please sign in again.',
   idle: 'You were signed out because of inactivity.',
   'signed-out': 'You have been signed out.',
+  'invite-accepted': 'Your account is ready. Sign in with your new password.',
 };
 
 const useSignIn = () => {

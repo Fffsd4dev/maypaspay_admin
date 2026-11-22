@@ -3,6 +3,7 @@
  * Used on both the list page and the details page.
  */
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Dropdown } from 'react-bootstrap';
 import {
   reactivateAdmin,
@@ -27,7 +28,13 @@ const ACTION_API = {
   suspend: suspendAdmin,
 };
 
-const AdminActionsMenu = ({ admin, roles, onDone, buttonLabel = 'Actions' }) => {
+// Always position the menu from the top-left. (When it flips upward, the default measures from the
+// bottom of the page, which puts it in the wrong place once the menu is drawn at the top level.)
+const MENU_POSITIONING = {
+  modifiers: [{ name: 'computeStyles', options: { adaptive: false } }],
+};
+
+const AdminActionsMenu = ({ admin, roles, onDone }) => {
   const { admin: me } = useAuthContext();
   const [openAction, setOpenAction] = useState(null); // key of ADMIN_ACTIONS, or null
 
@@ -37,28 +44,42 @@ const AdminActionsMenu = ({ admin, roles, onDone, buttonLabel = 'Actions' }) => 
   const current = openAction ? ADMIN_ACTIONS[openAction] : null;
   const close = () => setOpenAction(null);
 
+  // Everyday actions first; dangerous ones (Suspend) below a divider so they're harder to hit by mistake.
+  const safeActions = available.filter((key) => !ADMIN_ACTIONS[key].danger);
+  const dangerActions = available.filter((key) => ADMIN_ACTIONS[key].danger);
+
   const runAction = async (body) => {
     const response = await ACTION_API[openAction](admin.uuid, body);
     notifyResult(response, current.successMessage);
     onDone();
   };
 
+  const renderItem = (key) => {
+    const action = ADMIN_ACTIONS[key];
+    return (
+      <Dropdown.Item key={key} onClick={() => setOpenAction(key)} className={action.danger ? 'is-danger' : ''}>
+        <IconifyIcon icon={action.icon} className="fs-16" /> {action.label}
+      </Dropdown.Item>
+    );
+  };
+
   return (
     <>
       <Dropdown align="end">
-        <Dropdown.Toggle variant="light" size="sm">
-          {buttonLabel}
+        <Dropdown.Toggle as="button" type="button" className="btn btn-kebab" aria-label={`Actions for ${admin.name}`}>
+          <IconifyIcon icon="tabler:dots" />
         </Dropdown.Toggle>
-        <Dropdown.Menu>
-          {available.map((key) => {
-            const action = ADMIN_ACTIONS[key];
-            return (
-              <Dropdown.Item key={key} onClick={() => setOpenAction(key)} className={action.danger ? 'text-danger' : ''}>
-                <IconifyIcon icon={action.icon} className="me-1 align-middle" /> {action.label}
-              </Dropdown.Item>
-            );
-          })}
-        </Dropdown.Menu>
+                {/* The menu is drawn at the top level of the page (a portal), not inside the table.
+            Tables sit in a scroll box that would cut the menu off and make the table scroll;
+            from the top level it floats above everything and opens upward when there's no room below. */}
+          {createPortal(
+            <Dropdown.Menu className="actions-menu" popperConfig={MENU_POSITIONING}>
+              {safeActions.map(renderItem)}
+              {safeActions.length > 0 && dangerActions.length > 0 && <Dropdown.Divider />}
+              {dangerActions.map(renderItem)}
+            </Dropdown.Menu>,
+            document.body,
+          )}
       </Dropdown>
 
       <ChangeRoleModal
@@ -73,7 +94,7 @@ const AdminActionsMenu = ({ admin, roles, onDone, buttonLabel = 'Actions' }) => 
         <ReasonModal
           show
           title={current.label}
-          adminName={admin.name}
+          subject={admin.name}
           confirmText={current.confirmText}
           reason={current.reason}
           danger={current.danger}

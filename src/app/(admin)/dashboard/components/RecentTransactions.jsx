@@ -8,8 +8,8 @@ import StatusPill from './StatusPill';
 const RecentTransactions = () => (
   <DashboardCard title="Recent transactions" subtitle="Latest activity across all channels" isDemo>
     <div className="table-responsive">
-      <Table hover className="align-middle mb-0 table-sm">
-        <thead className="bg-light bg-opacity-50">
+      <Table hover className="data-table align-middle">
+        <thead>
           <tr>
             <th>Reference</th>
             <th>Customer</th>

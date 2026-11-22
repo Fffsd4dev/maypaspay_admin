@@ -1,4 +1,4 @@
-import { Badge, Button, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 
@@ -11,8 +11,8 @@ const deleteBlocker = (role) => {
 
 const RolesTable = ({ roles, onDelete }) => (
   <div className="table-responsive">
-    <Table hover className="align-middle mb-0">
-      <thead className="bg-light bg-opacity-50">
+    <Table hover className="data-table align-middle">
+      <thead>
         <tr>
           <th>Role</th>
           <th>Permissions</th>
@@ -29,9 +29,9 @@ const RolesTable = ({ roles, onDelete }) => (
                 <div className="fw-semibold d-flex align-items-center gap-2">
                   {role.label}
                   {role.is_system && (
-                    <Badge bg="dark-subtle" text="dark" className="fw-normal">
+                    <span className="status-pill status-pill-neutral">
                       <IconifyIcon icon="tabler:lock" /> System
-                    </Badge>
+                    </span>
                   )}
                 </div>
                 <code className="fs-12 text-muted">{role.name}</code>
@@ -44,19 +44,18 @@ const RolesTable = ({ roles, onDelete }) => (
                   <span className="text-muted fs-13">Can't be edited</span>
                 ) : (
                   <>
-                    <Link to={`/settings/roles/${role.id}`} className="btn btn-light btn-sm me-2">
-                      Edit
+                    <Link to={`/settings/roles/${role.id}`} className="btn btn-sm btn-outline-subtle me-2">
+                      <IconifyIcon icon="tabler:pencil" /> Edit
                     </Link>
-                    <Button
-                      variant="light"
-                      size="sm"
-                      className="text-danger"
+                    <button
+                      type="button"
+                      className="btn btn-sm btn-outline-subtle is-danger"
                       disabled={Boolean(blocker)}
                       title={blocker ?? 'Delete this role'}
                       onClick={() => onDelete(role)}
                     >
-                      Delete
-                    </Button>
+                      <IconifyIcon icon="tabler:trash" /> Delete
+                    </button>
                     {blocker && <div className="text-muted fs-12 mt-1">{blocker}</div>}
                   </>
                 )}

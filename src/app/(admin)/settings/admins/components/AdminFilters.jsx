@@ -1,4 +1,5 @@
 import { Col, Form, Row } from 'react-bootstrap';
+import IconifyIcon from '@/components/wrappers/IconifyIcon';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All statuses' },
@@ -11,13 +12,16 @@ const STATUS_OPTIONS = [
 const AdminFilters = ({ search, status, roleId, roles, onChange }) => (
   <Row className="g-2 mb-3">
     <Col md={6}>
-      <Form.Control
-        type="search"
-        placeholder="Search by name or email"
-        value={search}
-        onChange={(e) => onChange({ search: e.target.value })}
-        aria-label="Search admins"
-      />
+      <div className="search-box">
+        <IconifyIcon icon="tabler:search" className="search-icon" />
+        <Form.Control
+          type="search"
+          placeholder="Search by name or email"
+          value={search}
+          onChange={(e) => onChange({ search: e.target.value })}
+          aria-label="Search admins"
+        />
+      </div>
     </Col>
     <Col md={3}>
       <Form.Select value={status} onChange={(e) => onChange({ status: e.target.value })} aria-label="Filter by status">

@@ -28,6 +28,19 @@ export async function logout() {
   return data;
 }
 
+/**
+ * A new admin sets their password using the token from their invite email.
+ * Doesn't need (or use) a sign-in. The link works once and expires after 72 hours.
+ */
+export async function acceptInvite({ token, password, passwordConfirmation }) {
+  const { data } = await api.post(
+    '/admin/auth/accept-invite',
+    { token, password, password_confirmation: passwordConfirmation },
+    { skipAuthRedirect: true },
+  );
+  return data;
+}
+
 /** Changes the signed-in admin's password. */
 export async function changePassword({ currentPassword, password, passwordConfirmation }) {
   const { data } = await api.post('/admin/auth/password', {

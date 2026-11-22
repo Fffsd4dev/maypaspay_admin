@@ -1,0 +1,273 @@
+//
+// Shared UI for data screens: tables, status pills, buttons, the ⋯ actions button,
+// search box, pagination and the password field with the eye inside.
+// Uses theme variables, so everything works in light and dark mode.
+//
+
+// ---------- Tables: add className="data-table" to a <Table> ----------
+.data-table {
+    --#{$prefix}table-hover-bg: rgba(var(--#{$prefix}emphasis-color-rgb), 0.025); // faint row hover
+    --#{$prefix}table-bg: transparent;
+    margin-bottom: 0;
+
+    > thead > tr > th {
+        background: transparent;
+        color: var(--#{$prefix}secondary-color);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 0.65rem 0.875rem;
+        border-bottom: 1px solid var(--#{$prefix}border-color);
+        white-space: nowrap;
+    }
+
+    > tbody > tr > td {
+        padding: 0.8rem 0.875rem;
+        border-bottom: 1px solid rgba(var(--#{$prefix}emphasis-color-rgb), 0.05);
+        vertical-align: middle;
+    }
+
+    > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+}
+
+// Name + email (or similar) with an initials avatar
+.table-person {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.initials-avatar {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background-color: var(--#{$prefix}primary-bg-subtle);
+    color: var(--#{$prefix}primary-text-emphasis);
+}
+
+// ---------- Status pills: <span className="status-pill status-pill-success"> ----------
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem 0.2rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    &.with-dot::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+}
+
+@each $name in (success, warning, danger, info, primary) {
+    .status-pill-#{$name} {
+        background-color: var(--#{$prefix}#{$name}-bg-subtle);
+        color: var(--#{$prefix}#{$name}-text-emphasis);
+    }
+}
+
+// The theme's amber text is too pale to read on its light background, so use a deeper amber.
+.status-pill-warning {
+    color: #8a5a00;
+}
+
+// Neutral grey pill (Locked, System...). The theme's "secondary" colour is purple, so it isn't used here.
+.status-pill-neutral {
+    background-color: rgba(var(--#{$prefix}emphasis-color-rgb), 0.07);
+    color: var(--#{$prefix}emphasis-color);
+}
+
+// Dark mode: lighter amber and crimson text so pills stay readable on dark backgrounds.
+[data-bs-theme="dark"] {
+    .status-pill-warning {
+        color: #f5c76a;
+    }
+
+    .status-pill-danger,
+    .actions-menu .dropdown-item.is-danger {
+        color: tint-color($danger, 50%);
+    }
+}
+
+// ---------- Buttons ----------
+// Every button lines up its icon and label with a small gap (<Button><Icon /> Save</Button>)
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+}
+
+// Quiet outlined button (Edit, Cancel...). Add .is-danger for destructive ones (Delete).
+.btn-outline-subtle {
+    --#{$prefix}btn-color: var(--#{$prefix}dark); // darkest text in light mode, lightest in dark mode
+    --#{$prefix}btn-bg: var(--#{$prefix}secondary-bg);
+    --#{$prefix}btn-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-hover-color: var(--#{$prefix}dark);
+    --#{$prefix}btn-hover-bg: var(--#{$prefix}tertiary-bg);
+    --#{$prefix}btn-hover-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-active-bg: var(--#{$prefix}tertiary-bg);
+    --#{$prefix}btn-active-border-color: var(--#{$prefix}border-color);
+    --#{$prefix}btn-disabled-color: var(--#{$prefix}secondary-color);
+    --#{$prefix}btn-disabled-bg: var(--#{$prefix}secondary-bg);
+    --#{$prefix}btn-disabled-border-color: var(--#{$prefix}border-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    &.is-danger {
+        --#{$prefix}btn-color: var(--#{$prefix}danger);
+        --#{$prefix}btn-border-color: var(--#{$prefix}danger-border-subtle);
+        --#{$prefix}btn-hover-color: var(--#{$prefix}danger);
+        --#{$prefix}btn-hover-bg: var(--#{$prefix}danger-bg-subtle);
+        --#{$prefix}btn-hover-border-color: var(--#{$prefix}danger-border-subtle);
+        --#{$prefix}btn-disabled-color: var(--#{$prefix}danger);
+        --#{$prefix}btn-disabled-border-color: var(--#{$prefix}danger-border-subtle);
+    }
+}
+
+// Dark mode: the strong crimson is too dark on dark backgrounds, so use the lighter tint.
+[data-bs-theme="dark"] .btn-outline-subtle.is-danger {
+    --#{$prefix}btn-color: #{tint-color($danger, 50%)};
+    --#{$prefix}btn-hover-color: #{tint-color($danger, 50%)};
+    --#{$prefix}btn-disabled-color: #{tint-color($danger, 50%)};
+    --#{$prefix}btn-border-color: #{rgba(tint-color($danger, 50%), 0.45)};
+    --#{$prefix}btn-hover-border-color: #{rgba(tint-color($danger, 50%), 0.6)};
+    --#{$prefix}btn-disabled-border-color: #{rgba(tint-color($danger, 50%), 0.45)};
+}
+
+// The square ⋯ "more actions" button
+.btn-kebab {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    border-radius: $border-radius;
+    color: var(--#{$prefix}dark);
+    background-color: var(--#{$prefix}secondary-bg);
+    border: 1px solid var(--#{$prefix}border-color);
+
+    &:hover,
+    &.show,
+    &:focus-visible {
+        background-color: var(--#{$prefix}tertiary-bg);
+        color: var(--#{$prefix}emphasis-color);
+    }
+
+    &::after {
+        display: none; // no dropdown caret
+    }
+}
+
+// Dropdown menus for row actions
+.actions-menu {
+    min-width: 13rem;
+    padding: 0.375rem;
+    border-radius: 0.55rem;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.12);
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        border-radius: 0.375rem;
+        padding: 0.5rem 0.625rem;
+    }
+
+    .dropdown-item.is-danger {
+        color: var(--#{$prefix}danger-text-emphasis);
+    }
+}
+
+// ---------- Search box with the icon inside ----------
+.search-box {
+    position: relative;
+
+    .search-icon {
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--#{$prefix}secondary-color);
+        pointer-events: none;
+    }
+
+    .form-control {
+        padding-left: 2.3rem;
+    }
+}
+
+// ---------- Pagination ----------
+.data-pagination {
+    margin-bottom: 0;
+    gap: 0.375rem;
+
+    .page-link {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 0.6rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $border-radius !important;
+        border: 1px solid var(--#{$prefix}border-color);
+        margin-left: 0 !important;
+    }
+}
+
+// ---------- Password field with the eye inside ----------
+.password-field {
+    position: relative;
+
+    .form-control {
+        padding-right: 2.75rem;
+    }
+
+    // Bootstrap's red "!" icon would sit under the eye, so hide it (the red border and message stay).
+    .form-control.is-invalid {
+        background-image: none;
+        padding-right: 2.75rem;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 0.375rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 0.375rem;
+        background: transparent;
+        color: var(--#{$prefix}secondary-color);
+        font-size: 1.15rem;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--#{$prefix}tertiary-bg);
+            color: var(--#{$prefix}emphasis-color);
+        }
+    }
+}

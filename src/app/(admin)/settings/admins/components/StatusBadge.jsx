@@ -1,24 +1,22 @@
-import { Badge } from 'react-bootstrap';
+import IconifyIcon from '@/components/wrappers/IconifyIcon';
 
 const STATUS_STYLES = {
-  active: { bg: 'success', label: 'Active' },
-  invited: { bg: 'warning', label: 'Invited' },
-  suspended: { bg: 'danger', label: 'Suspended' },
+  active: { variant: 'success', label: 'Active' },
+  invited: { variant: 'warning', label: 'Invited' },
+  suspended: { variant: 'danger', label: 'Suspended' },
 };
 
-/** Shows the admin's status, plus a "Locked" badge if they're locked out. */
+/** The admin's status as a pill with a dot, plus a "Locked" pill if they're locked out. */
 const StatusBadge = ({ status, isLocked }) => {
-  const style = STATUS_STYLES[status] ?? { bg: 'secondary', label: status };
+  const style = STATUS_STYLES[status] ?? { variant: 'neutral', label: status };
 
   return (
-    <span className="d-inline-flex gap-1">
-      <Badge bg={`${style.bg}-subtle`} text={style.bg} className="fs-12">
-        {style.label}
-      </Badge>
+    <span className="d-inline-flex flex-wrap gap-1">
+      <span className={`status-pill with-dot status-pill-${style.variant}`}>{style.label}</span>
       {isLocked && (
-        <Badge bg="dark-subtle" text="dark" className="fs-12">
-          Locked
-        </Badge>
+        <span className="status-pill status-pill-neutral">
+          <IconifyIcon icon="tabler:lock" /> Locked
+        </span>
       )}
     </span>
   );

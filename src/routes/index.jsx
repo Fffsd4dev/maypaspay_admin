@@ -12,6 +12,7 @@ import { Navigate } from 'react-router-dom';
 const Login = lazy(() => import('@/app/(other)/auth/login/page'));
 const VerifyCode = lazy(() => import('@/app/(other)/auth/verify/page'));
 const Logout = lazy(() => import('@/app/(other)/auth/logout/page'));
+const AcceptInvite = lazy(() => import('@/app/(other)/auth/accept-invite/page'));
 
 // errors
 const Error403 = lazy(() => import('@/app/(other)/errors/ErrorPage').then((m) => ({ default: m.Error403 })));
@@ -46,6 +47,7 @@ export const guestRoutes = [{ path: '/auth/login', name: 'Login', element: <Logi
 export const publicRoutes = [
   { path: '/auth/verify', name: 'Verify Code', element: <VerifyCode /> },
   { path: '/auth/logout', name: 'Logout', element: <Logout /> },
+  { path: '/accept-invite', name: 'Accept Invite', element: <AcceptInvite /> },
   { path: '/errors/error-403', name: '403 Forbidden', element: <Error403 /> },
   { path: '/errors/error-404', name: '404 Not Found', element: <Error404 /> },
   { path: '/errors/error-500', name: '500 Server Error', element: <Error500 /> },

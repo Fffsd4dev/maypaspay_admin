@@ -51,6 +51,7 @@ const ERROR_CODE_MESSAGES = {
   exceeds_own_access: "You can't give a role with permissions you don't have yourself.",
   own_account: "You can't do this to your own account.",
   system_role: "The super admin role is built in and can't be changed.",
+  invite_invalid: 'This invite link is invalid, has already been used, or has expired.',
 };
 
 /**
