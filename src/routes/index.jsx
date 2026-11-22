@@ -27,6 +27,7 @@ const Admins = lazy(() => import('@/app/(admin)/settings/admins/page'));
 const AdminDetails = lazy(() => import('@/app/(admin)/settings/admins/details/page'));
 const Roles = lazy(() => import('@/app/(admin)/settings/roles/page'));
 const RoleEditor = lazy(() => import('@/app/(admin)/settings/roles/editor/page'));
+const AuditLog = lazy(() => import('@/app/(admin)/audit-log/page'));
 
 export const appRoutes = [
   { path: '/', name: 'Home', element: <Navigate to="/dashboard" replace /> },
@@ -40,6 +41,7 @@ export const appRoutes = [
   { path: '/settings/roles', name: 'Roles', element: <Roles />, permission: 'settings.roles' },
   { path: '/settings/roles/new', name: 'New Role', element: <RoleEditor />, permission: 'settings.roles' },
   { path: '/settings/roles/:id', name: 'Edit Role', element: <RoleEditor key="edit" />, permission: 'settings.roles' },
+  { path: '/audit-log', name: 'Audit Log', element: <AuditLog />, permission: 'audit.view' },
 ];
 
 export const guestRoutes = [{ path: '/auth/login', name: 'Login', element: <Login /> }];
