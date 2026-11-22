@@ -1,116 +1,86 @@
 # MaypasPay Admin
 
-Admin dashboard for MaypasPay. React 19 + Vite + React Bootstrap (styling based on the Greeva template).
+The internal administration dashboard for MaypasPay. Authorised staff use it to manage the platform: staff accounts, roles and access, and day-to-day operational oversight.
+
+> This is a private, internal tool. Access is restricted to approved MaypasPay staff.
+
+## Features
+
+- **Secure sign-in** with two-step verification
+- **Role-based access:** each staff member only sees and does what their role allows
+- **Staff management:** invite, update and manage administrator accounts
+- **Roles and permissions:** define what each role can access
+- **Overview dashboard** with key figures and activity
+- **My account:** profile, access summary and password management
+- **Light and dark mode**, responsive on desktop, tablet and mobile
+
+## Tech stack
+
+- [React 19](https://react.dev) with [Vite](https://vite.dev)
+- [React Bootstrap](https://react-bootstrap.github.io) and Sass for the UI
+- [React Router](https://reactrouter.com) for navigation
+- [React Hook Form](https://react-hook-form.com) and [Yup](https://github.com/jquense/yup) for forms
+- [Recharts](https://recharts.org) for charts
+- [Iconify](https://iconify.design) (Tabler icon set), bundled locally
 
 ## Getting started
 
+**Requirements:** Node.js 20 or newer, and npm.
+
 ```bash
-cp .env.example .env
 npm install
+cp .env.example .env    # then fill in the values (ask the team lead)
 npm run dev
 ```
 
-| Variable                    | What it does                                         |
-| --------------------------- | ---------------------------------------------------- |
-| `VITE_API_BASE_URL`         | API base URL, no trailing slash. Must be `https://` in production builds. |
-| `VITE_IDLE_TIMEOUT_MINUTES` | Sign the admin out after this many idle minutes (default 15). |
+The app runs at `http://localhost:5173`.
 
-Never commit `.env`. It is already in `.gitignore`. Use **npm** only, so everyone installs the same versions from `package-lock.json`.
+### Environment variables
 
-## Where things live
+| Variable | Description |
+| --- | --- |
+| `VITE_API_BASE_URL` | Base URL of the MaypasPay API |
+| `VITE_IDLE_TIMEOUT_MINUTES` | Minutes of inactivity before a user is signed out |
+
+Never commit your `.env` file. It is excluded by `.gitignore`. Real values are shared privately within the team.
+
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Build for production into `dist/` |
+| `npm run preview` | Serve the production build locally (with production security settings) |
+| `npm run icons` | Rebuild the bundled icon set (normally automatic) |
+
+## Project structure
 
 ```
-security-headers.js        security headers + Content Security Policy (one source of truth)
-scripts/build-icons.mjs    bundles the icons we use (runs before dev/build)
 src/
-  config/env.js            all settings read from .env
-  api/client.js            the ONE axios instance (token, 401 handling, error messages)
-  api/auth.js              auth endpoints
-  api/admins.js            admin (staff) endpoints
-  api/roles.js             roles endpoints
-  auth/sessionStore.js     where the session is stored (sessionStorage)
-  auth/redirect.js         safe "redirect after login" check
-  context/useAuthContext.jsx  auth state + login / verifyCode / logout / hasPermission
-  hooks/useIdleTimer.js    inactivity sign-out
-  routes/index.jsx         every page in the app (add new pages here)
-  routes/guards.jsx        ProtectedRoute and GuestRoute
-  assets/data/menu-items.js   sidebar + top menu
-  components/auth/AuthCard.jsx  shared layout for auth and error screens
-  components/TablePagination.jsx  pagination for any API list
-  app/(other)/auth/        login, verify (2FA code), logout
-  app/(other)/errors/      403, 404, 500
-  app/(admin)/dashboard/   home page
-  app/(admin)/settings/admins/          Admins module (list, details, actions)
-  app/(admin)/settings/change-password/
+  api/          communication with the backend
+  app/          pages, grouped by area (auth, dashboard, settings...)
+  assets/       styles, images, fonts and bundled icons
+  auth/         sign-in session helpers
+  components/   shared, reusable UI components
+  config/       app settings read from the environment
+  context/      app-wide state (auth, layout)
+  hooks/        reusable React hooks
+  routes/       page list and route protection
+  utils/        formatting and helper functions
 ```
 
-## Icons
+## Development guidelines
 
-Icons are bundled with the app, not loaded from Iconify's servers. Use them as usual:
+- **One API client:** all requests go through the shared client in `src/api/`, never directly.
+- **Reuse shared components** (tables, pills, buttons, forms) so the UI stays consistent.
+- **Protect new pages** by adding them to the route list with the access they require.
+- **Keep secrets out of the code:** no keys, tokens or real credentials in source files or commits.
+- **Pull before you start, commit small and often,** and write clear commit messages.
 
-```jsx
-<IconifyIcon icon="tabler:users" />
-```
+## Security
 
-`scripts/build-icons.mjs` finds every `'set:name'` string in `src/` and copies just those icons into `src/assets/icons.json`. Vite runs it automatically when dev/build starts **and every time you save a `.js`/`.jsx` file**, so new icons just appear.
+If you find a security issue, **do not open a public issue or share it in chat.** Report it privately to the project lead.
 
-- An icon not showing? The browser console says which one. Check the name on the Iconify site, or run `npm run icons`.
-- Using a new icon set (e.g. `lucide:...`)? Install it first: `npm install -D @iconify-json/lucide`.
-- Browse icons at https://icon-sets.iconify.design (we use the **tabler** set).
+## License
 
-## How sign-in works
-
-1. **Login** (`/auth/login`) posts email + password to `/admin/auth/login`. The API emails a code.
-2. **Verify** (`/auth/verify`) posts email + code to `/admin/auth/2fa` and gets back the token, `expires_at` and the admin profile.
-   - The page says "check your registered email". It never shows the address.
-   - The email is kept in memory only between steps 1 and 2, so refreshing this page restarts sign-in.
-3. The session (token, expiry, admin) is saved in **sessionStorage**, so it ends when the tab closes and isn't shared with other tabs.
-
-The admin is signed out automatically when:
-
-- the token reaches `expires_at`,
-- they are inactive for `VITE_IDLE_TIMEOUT_MINUTES`, or
-- any API call returns `401`.
-
-The login page then explains why ("Your session has expired…" or "…because of inactivity").
-
-## Security rules for contributors
-
-- **Always use `api` from `@/api/client`** for requests. Never use axios or fetch directly, or you lose the token and 401 handling.
-- **Never store** passwords, 2FA codes or sensitive customer data in localStorage, sessionStorage, cookies or the URL.
-- **Show errors with `getErrorMessage(err)`.** Never render raw server responses.
-- **Login errors stay generic** ("Invalid email or password") so the form never reveals which emails exist.
-- **Permissions in the UI are only for showing or hiding things.** The backend must check every request.
-- Don't use `dangerouslySetInnerHTML` with API data.
-
-## Adding a protected page
-
-1. Create the page in `src/app/(admin)/your-page/page.jsx`.
-2. Add it to `appRoutes` in `src/routes/index.jsx`. To restrict it to a permission, add `permission`:
-
-```js
-{ path: '/users', name: 'Users', element: <Users />, permission: 'users.view' }
-```
-
-All routes in `appRoutes` require sign-in automatically. Admins without the permission are sent to the 403 page.
-
-3. Add a menu entry in `src/assets/data/menu-items.js` with the same `permission`, so it's hidden from admins who can't open it.
-
-To hide UI parts, use the same permissions:
-
-```jsx
-const { hasPermission } = useAuthContext();
-{hasPermission('kyc.reveal') && <RevealButton />}
-```
-
-## Security headers
-
-The headers (including the Content Security Policy) are defined once in `security-headers.js`.
-
-- `npm run dev` applies all of them except the CSP, because Vite's hot reload needs inline scripts.
-- `npm run build && npm run preview` applies all of them. **Test here before every release.**
-- The hosting server must send the same headers in production.
-
-If something stops loading, the browser console will say "Refused to load … Content Security Policy" and name the URL. Only add a domain to the policy if we really trust it.
-
-Production builds ship without source maps and with `console.log/info/debug` removed.
+Proprietary. © MaypasPay. All rights reserved. Not for redistribution.
