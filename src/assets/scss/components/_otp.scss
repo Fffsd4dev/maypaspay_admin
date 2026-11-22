@@ -1,0 +1,48 @@
+//
+// One-box-per-digit code input (components/form/OtpInput.jsx)
+//
+
+.otp-input {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.otp-box {
+    width: 100%;
+    max-width: 56px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--#{$prefix}dark); // darkest text in light mode, lightest in dark mode
+    background-color: var(--#{$prefix}light); // empty box: soft grey (dark grey in dark mode)
+    border: 1px solid var(--#{$prefix}border-color);
+    border-radius: $border-radius;
+    caret-color: var(--#{$prefix}primary);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+
+    &.is-filled {
+        background-color: var(--#{$prefix}secondary-bg); // same as the card
+        border-color: rgba(var(--#{$prefix}dark-rgb), 0.25);
+    }
+
+    &:focus {
+        outline: none;
+        background-color: var(--#{$prefix}secondary-bg);
+        border-color: var(--#{$prefix}primary);
+        box-shadow: 0 0 0 3px rgba(var(--#{$prefix}primary-rgb), 0.18);
+    }
+
+    &.is-invalid {
+        border-color: var(--#{$prefix}danger);
+    }
+
+    &.is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(var(--#{$prefix}danger-rgb), 0.2);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+    }
+}

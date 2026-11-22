@@ -1,0 +1,34 @@
+//
+// _authentication.scss
+//
+
+.auth-bg {
+    background-color: #121218;
+    background-image:
+        radial-gradient(circle at 12% 18%, rgba($brand, 0.55) 0, rgba($brand, 0) 38%),
+        radial-gradient(circle at 88% 85%, rgba($brand, 0.4) 0, rgba($brand, 0) 42%),
+        linear-gradient(160deg, #1b1b22 0%, #0d0d12 100%);
+}
+
+.auth-brand {
+    .logo-dark {
+        display: inline-block;
+    }
+
+    .logo-light {
+        display: none;
+    }
+}
+
+// Dark mode
+html[data-bs-theme="dark"] {
+    .auth-brand {
+        .logo-light {
+            display: inline-block;
+        }
+
+        .logo-dark {
+            display: none;
+        }
+    }
+}
