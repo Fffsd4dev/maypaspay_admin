@@ -14,7 +14,7 @@
  * Usage in any component:
  *   const { admin, isAuthenticated, hasPermission, logout, refreshAdmin } = useAuthContext();
  */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import * as authApi from '@/api/auth';
 import { setUnauthorizedHandler } from '@/api/client';
 import { clearSession, loadSession, saveSession } from '@/auth/sessionStore';
@@ -99,17 +99,22 @@ export function AuthProvider({ children }) {
     return admin;
   }, []);
 
-  // Keep the admin's permissions current: refresh on load (also confirms the token still works;
+    // Keep the admin's permissions current: refresh on load (also confirms the token still works;
   // a 401 signs them out) and when they return to the tab, at most once a minute.
+  // The last-refresh time lives in a ref so it survives React re-running the effect
+  // (StrictMode does this in development), which would otherwise call /me twice.
   const isAuthenticated = Boolean(session);
+  const lastRefreshRef = useRef(0);
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      lastRefreshRef.current = 0; // next sign-in refreshes straight away
+      return;
+    }
     const REFRESH_GAP_MS = 60 * 1000;
-    let lastRefresh = 0;
 
     const refresh = () => {
-      if (document.visibilityState !== 'visible' || Date.now() - lastRefresh < REFRESH_GAP_MS) return;
-      lastRefresh = Date.now();
+      if (document.visibilityState !== 'visible' || Date.now() - lastRefreshRef.current < REFRESH_GAP_MS) return;
+      lastRefreshRef.current = Date.now();
       refreshAdmin().catch(() => {}); // network errors are ignored; a 401 is handled by the API client
     };
 
