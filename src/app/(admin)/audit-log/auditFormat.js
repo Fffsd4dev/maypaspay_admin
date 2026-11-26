@@ -8,9 +8,14 @@ export const describeAction = (action = '') => {
   return words.charAt(0).toUpperCase() + words.slice(1);
 };
 
-/** "Admin #1", "User #52", or "System" when there's no actor. */
-export const describeActor = (entry) =>
-  entry.actor_type ? `${entry.actor_type === 'admin' ? 'Admin' : 'User'} #${entry.actor_id}` : 'System';
+/** True when the entry was done by staff ("admin_user"), false for customers. */
+export const isAdminActor = (entry) => String(entry.actor_type ?? '').startsWith('admin');
+
+/** The actor's name; "Admin #1" / "User #52" if the API sent no name; "System" when there's no actor. */
+export const describeActor = (entry) => {
+  if (!entry.actor_type) return 'System';
+  return entry.actor_name || `${isAdminActor(entry) ? 'Admin' : 'User'} #${entry.actor_id}`;
+};
 
 /** "Role #7", or null when the entry isn't about a specific record. */
 export const describeEntity = (entry) =>

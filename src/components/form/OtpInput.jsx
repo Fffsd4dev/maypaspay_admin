@@ -43,8 +43,8 @@ const OtpInput = ({ length = 6, value, onChange, onComplete, invalid = false, di
     const incoming = onlyDigits(text);
     if (!incoming) return;
     const start = Math.min(index, value.length);
+    focusBox(start + incoming.length); // move first, so onComplete can move focus somewhere else
     update(value.slice(0, start) + incoming + value.slice(start + incoming.length));
-    focusBox(start + incoming.length);
   };
 
   const handleChange = (index, event) => {

@@ -1,7 +1,37 @@
 import { Table } from 'react-bootstrap';
 import IconifyIcon from '@/components/wrappers/IconifyIcon';
 import { formatDateTime } from '@/utils/date';
-import { describeAction, describeActor, describeEntity } from '../auditFormat';
+import { getInitials } from '@/utils/format';
+import { describeAction, describeActor, describeEntity, isAdminActor } from '../auditFormat';
+
+/** Who did it: avatar, name and email. The small badge tells staff and customers apart. */
+const ActorCell = ({ entry }) => {
+  if (!entry.actor_type) {
+    return (
+      <span className="status-pill status-pill-neutral">
+        <IconifyIcon icon="tabler:settings-automation" /> System
+      </span>
+    );
+  }
+  const isAdmin = isAdminActor(entry);
+  return (
+    <div className="table-person">
+      <span className="initials-avatar">{getInitials(describeActor(entry))}</span>
+      <div>
+        <div className="fw-semibold d-flex align-items-center gap-1">
+          {describeActor(entry)}
+          <IconifyIcon
+            icon={isAdmin ? 'tabler:user-shield' : 'tabler:user'}
+            className="text-muted"
+            title={isAdmin ? 'Admin' : 'Customer'}
+            aria-label={isAdmin ? 'Admin' : 'Customer'}
+          />
+        </div>
+        {entry.actor_email && <div className="text-muted fs-13 text-break">{entry.actor_email}</div>}
+      </div>
+    </div>
+  );
+};
 
 /** The audit entries. Clicking a row (or pressing Enter on it) opens its details. */
 const AuditTable = ({ entries, onOpen }) => (
@@ -32,10 +62,7 @@ const AuditTable = ({ entries, onOpen }) => (
               <code className="fs-12 text-muted">{entry.action}</code>
             </td>
             <td>
-              {/* Neutral colour on purpose (red would read as an error); the icon tells admins and customers apart. */}
-              <span className="status-pill status-pill-neutral">
-                <IconifyIcon icon={entry.actor_type === 'admin' ? 'tabler:user-shield' : 'tabler:user'} /> {describeActor(entry)}
-              </span>
+              <ActorCell entry={entry} />
             </td>
             <td className="text-muted">{describeEntity(entry) ?? '—'}</td>
             <td className="font-monospace fs-13 text-muted">{entry.ip_address ?? '—'}</td>

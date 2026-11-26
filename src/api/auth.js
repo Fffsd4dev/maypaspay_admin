@@ -41,9 +41,19 @@ export async function acceptInvite({ token, password, passwordConfirmation }) {
   return data;
 }
 
-/** Changes the signed-in admin's password. */
-export async function changePassword({ currentPassword, password, passwordConfirmation }) {
+/**
+ * Changing the password, step 1: confirm the current password.
+ * The API then emails a verification code to the admin.
+ */
+export async function requestPasswordCode(currentPassword) {
+  const { data } = await api.post('/admin/auth/password/code', { current_password: currentPassword });
+  return data;
+}
+
+/** Changing the password, step 2: the emailed code plus the new password. */
+export async function changePassword({ code, currentPassword, password, passwordConfirmation }) {
   const { data } = await api.post('/admin/auth/password', {
+    code,
     current_password: currentPassword,
     password,
     password_confirmation: passwordConfirmation,

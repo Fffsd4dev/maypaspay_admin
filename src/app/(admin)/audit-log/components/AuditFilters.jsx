@@ -45,7 +45,7 @@ const AuditFilters = ({ filters, onChange, onReset, actionSuggestions }) => {
           <Form.Label className="fs-13 text-muted mb-1" htmlFor="audit-actor-type">Done by</Form.Label>
           <Form.Select id="audit-actor-type" {...field('actor_type')}>
             <option value="">Anyone</option>
-            <option value="admin">Admins</option>
+            <option value="admin_users">Admins</option>
             <option value="user">Users (customers)</option>
           </Form.Select>
         </Col>

@@ -36,7 +36,10 @@ const AuditDetails = ({ entry, onClose, onFilter }) => {
       </Offcanvas.Header>
       <Offcanvas.Body>
         <Detail label="When">{formatDateTime(entry.created_at)}</Detail>
-        <Detail label="Done by">{describeActor(entry)}</Detail>
+        <Detail label="Done by">
+          {describeActor(entry)}
+          {entry.actor_email && <span className="d-block text-muted fs-13 fw-normal">{entry.actor_email}</span>}
+        </Detail>
         <Detail label="Record">{entity ?? '—'}</Detail>
         <Detail label="Reason">{entry.reason || '—'}</Detail>
         <Detail label="IP address" mono>{entry.ip_address ?? '—'}</Detail>
